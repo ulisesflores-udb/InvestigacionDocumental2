@@ -12,6 +12,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
 
 export default function App() {
+
+    const [sensors, setSensors] = useState([
+        { id: "1", temperature: 21.3, humidity: 43, location: "Park Area" },
+        { id: "2", temperature: 19.8, humidity: 50, location: "Garden" },
+        { id: "3", temperature: 23.1, humidity: 40, location: "Playground" },
+        { id: "4", temperature: 20.5, humidity: 47, location: "Lake Side" },
+    ])
   return (
     <>
       <StatusBar style="light" />
@@ -24,14 +31,32 @@ export default function App() {
         >
           <Stack.Screen
             name="Welcome"
-            component={WelcomeScreen}
             options={{ title: "Inicio" }}
-          />
+          >
+            {props => (
+              <WelcomeScreen
+                {...props}
+                sensors={sensors}
+                setSensors={setSensors}
+              />
+            )}
+          </Stack.Screen>
           <Stack.Screen
             name="Sensor"
-            component={Sensor}
-            options={({ route }) => ({ title: route.params.sensor.location })}
-          />
+            options={({ route }) => {
+              const { index } = route.params;
+              const sensor = sensors && typeof index === "number" ? sensors[index] : null;
+              return { title: sensor ? sensor.location : "Sensor" };
+            }}
+          >
+            {props => (
+              <Sensor
+                {...props}
+                sensors={sensors}
+                setSensors={setSensors}
+              />
+            )}
+          </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </>

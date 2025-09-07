@@ -3,17 +3,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import SensorPreview from "./SensorPreview";
 
 
-const WelcomeScreen = ( { navigation } ) => {
-
-    const [sensors, setSensors] = useState([
-        { id: "1", temperature: 21.3, humidity: 43, location: "Park Area" },
-        { id: "2", temperature: 19.8, humidity: 50, location: "Garden" },
-        { id: "3", temperature: 23.1, humidity: 40, location: "Playground" },
-        { id: "4", temperature: 20.5, humidity: 47, location: "Lake Side" },
-    ])
-
-    
-
+const WelcomeScreen = ( { navigation, sensors, setSensors } ) => {
 
     return (
         <View style={styles.container}>
@@ -31,8 +21,6 @@ const WelcomeScreen = ( { navigation } ) => {
                     location={item.location}
                     onPress={() =>
                     navigation.navigate("Sensor", { 
-                        sensors: sensors,
-                        setSensors: setSensors,
                         index: index,
                     })
                     }

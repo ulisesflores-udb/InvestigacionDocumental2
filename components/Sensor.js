@@ -1,14 +1,15 @@
-import React, { useState } from "react"
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import Button from "./Button";
 import Icon from "react-native-vector-icons/Ionicons";
 
 
-const Sensor = ({ route, navigation}) => {
+const Sensor = ({ route, navigation, sensors, setSensors }) => {
+    const { index } = route.params; 
+    const sensor = sensors[index];
 
-    const handleRefresh = ({sensors, setSensors, index}) => {
+    const handleRefresh = () => {
         const newSensors = [...sensors];
-        console.log(newSensors)
         const randomTemp = (Math.random() * 10 + 15).toFixed(1);
         const randomHumidity = (Math.random() * 30 + 30).toFixed(0);
         newSensors[index] = {
@@ -17,72 +18,63 @@ const Sensor = ({ route, navigation}) => {
             humidity: parseInt(randomHumidity),
         };
         setSensors(newSensors);
+    };
+
+    useEffect(() => {
+        navigation.setParams({ sensors });
+    }, [sensors]);
+
+    if (!sensor) {
+        return (
+            <View style={styles.container2}>
+                <Text style={styles.text}>Sensor no encontrado</Text>
+            </View>
+        );
     }
 
+    const prevSensor = sensors && index > 0 ? sensors[index - 1] : sensors[sensors.length - 1];
+    const nextSensor = sensors && index < sensors.length - 1 ? sensors[index + 1] : sensors[0];
 
-    const {sensors, index } = route.params;
-    const sensor = sensors[index];
-    if (!sensor) {
     return (
         <View style={styles.container2}>
-            <Text style={styles.text}>Sensor no encontrado</Text>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <View style={styles.iconCircle}>
+                        <Icon name="thermometer-outline" size={22} color="#fff" />
+                    </View>
+                    <Text style={styles.title}>{sensor.location}</Text>
+                </View>
+                <Text style={styles.text}>Temperature: {sensor.temperature}°C</Text>
+                <Text style={styles.text}>Humidity: {sensor.humidity}%</Text>
+                <View style={styles.buttonRow}>
+                    <Button
+                        name="arrow-back-outline"
+                        size={22}
+                        color="#333"
+                        onPress={() => navigation.setParams({
+                            index: index > 0 ? index - 1 : sensors.length - 1
+                        })}
+                    />
+                    <Button
+                        name="arrow-forward-outline"
+                        size={22}
+                        color="#333"
+                        onPress={() => navigation.setParams({
+                            index: index < sensors.length - 1 ? index + 1 : 0
+                        })}
+                    />
+                    <Button
+                        name="refresh"
+                        size={36}
+                        color="#333"
+                        onPress={handleRefresh}
+                        style={styles.fab}
+                    />
+                </View>
+            </View>
         </View>
     );
-    }
-    const prevSensor = sensors && index > 0 ? sensors[index - 1] : sensors[(sensors.length - 1)];
-    const nextSensor = sensors && index < sensors.length - 1 ? sensors[index + 1] : sensors[0];
-    return (
-    <View style={styles.container2}>
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.iconCircle}>
-                    <Icon name="thermometer-outline" size={22} color="#fff" />
-                </View>
-                <Text style={styles.title}>{sensor.location}</Text>
-            </View>
-
-
-            <Text style={styles.text}>Temperature: {sensor.temperature}°C</Text>
-            <Text style={styles.text}>Humidity: {sensor.humidity}%</Text>
-            <View style={styles.buttonRow}>
-                <Button
-                    name="arrow-back-outline"
-                    size={22}
-                    color="#333"
-                    onPress={() => prevSensor && navigation.navigate("Sensor", 
-                    { 
-                        sensors: sensors,
-                        setSensors: route.params.setSensors,
-                        index: index > 0 ? index - 1 : sensors.length - 1
-                    })}
-                />
-                <Button
-                    name="arrow-forward-outline"
-                    size={22}
-                    color="#333"
-                    onPress={() => nextSensor && navigation.navigate("Sensor", {        
-                        sensors: sensors,
-                        setSensors: route.params.setSensors,
-                        index: index < sensors.length - 1 ? index + 1 : 0
-                    })}
-                />
-                <Button
-                    name="refresh"
-                    size={36}
-                    color="#333"
-                    onPress={() => handleRefresh({
-                        sensors: route.params.sensors,
-                        setSensors: route.params.setSensors, // si lo pasas desde Welcome
-                        index: route.params.index
-                    })}
-                    style={styles.fab}
-                />
-            </View>
-        </View>
-        
-    </View>
-    )
-}
+};
 
 const styles = StyleSheet.create({
     container2: {
