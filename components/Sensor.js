@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import Button from "./Button";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -7,8 +7,18 @@ import Toast from "react-native-toast-message";
 const Sensor = ({ route, navigation, sensors, setSensors, obtenerClima}) => {
     const { index } = route.params; 
     const sensor = sensors[index];
+    const intervalRef = useRef(null);
 
-    const handleRefresh = async () => {
+    const startAutoRefresh = () => {
+        if (intervalRef.current)
+            clearInterval(intervalRef.current);
+
+        intervalRef.current = setInterval(() => {
+            handleRefresh(false);
+        }, 5000);
+    };
+
+    const handleRefresh = async (manual = true) => {
         const newSensors = [...sensors];
         const climaData = await obtenerClima(sensor.lat, sensor.lon);
         if (climaData) {
@@ -19,28 +29,31 @@ const Sensor = ({ route, navigation, sensors, setSensors, obtenerClima}) => {
                 location: climaData.location.name
             };
             setSensors(newSensors);
+
             Toast.show({
                 type: 'success',
                 text1: 'Datos actualizados',
                 text2: `Temperatura: ${climaData.current.temp_c}°C, Humedad: ${climaData.current.humidity}%`,
                 position: 'bottom',
-                visibilityTime: 2000,
+                visibilityTime: 2000
             });
+
+            if (manual)
+                startAutoRefresh();
         }
     };
+
+    
 
     useEffect(() => {
         navigation.setParams({ sensors });
     }, [sensors]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            handleRefresh();
-        }, 5000);
+        startAutoRefresh();
 
-        
-        return () => clearInterval(interval);
-    }, [index]); // Se reinicia si el usuario cambia de sensor
+        return () => clearInterval(intervalRef.current);
+    }, [index]);
 
 
     if (!sensor) {
