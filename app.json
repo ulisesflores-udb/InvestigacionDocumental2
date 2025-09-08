@@ -4,6 +4,15 @@
     "slug": "sensor-app",
     "version": "1.0.0",
     "orientation": "portrait",
+    "plugins": [
+      [
+        "@reactvision/react-viro", {
+          "android": {
+            "xRMode": ["AR"]
+          }
+        }
+      ]
+    ],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -20,7 +29,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.guillermo_1234.sensorapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
