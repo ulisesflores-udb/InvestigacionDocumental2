@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import SensorPreview from "./SensorPreview";
 
 
-const WelcomeScreen = ( { navigation, sensors, setSensors } ) => {
-
+const WelcomeScreen = ( { navigation, sensors, setSensors} ) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -17,14 +16,14 @@ const WelcomeScreen = ( { navigation, sensors, setSensors } ) => {
                 keyExtractor={(item) => item.id}
                 numColumns={2}
                 renderItem={({ item, index }) => (
-                <SensorPreview
-                    location={item.location}
-                    onPress={() =>
-                    navigation.navigate("Sensor", { 
-                        index: index,
-                    })
-                    }
-                />
+                    <SensorPreview
+                        location={item.location}
+                        onPress={() =>
+                            navigation.navigate("Sensor", { 
+                                index: index,
+                            })
+                        }
+                    />
                 )}
             />
         </View>

@@ -1,28 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import Button from "./Button";
 import Icon from "react-native-vector-icons/Ionicons";
+import Toast from "react-native-toast-message";
 
-
-const Sensor = ({ route, navigation, sensors, setSensors }) => {
+const Sensor = ({ route, navigation, sensors, setSensors, obtenerClima}) => {
     const { index } = route.params; 
     const sensor = sensors[index];
 
-    const handleRefresh = () => {
+    const handleRefresh = async () => {
         const newSensors = [...sensors];
-        const randomTemp = (Math.random() * 10 + 15).toFixed(1);
-        const randomHumidity = (Math.random() * 30 + 30).toFixed(0);
-        newSensors[index] = {
-            ...newSensors[index],
-            temperature: parseFloat(randomTemp),
-            humidity: parseInt(randomHumidity),
-        };
-        setSensors(newSensors);
+        const climaData = await obtenerClima(sensor.lat, sensor.lon);
+        if (climaData) {
+            newSensors[index] = {
+                ...newSensors[index],
+                temperature: climaData.current.temp_c,
+                humidity: climaData.current.humidity,
+                location: climaData.location.name
+            };
+            setSensors(newSensors);
+            Toast.show({
+                type: 'success',
+                text1: 'Datos actualizados',
+                text2: `Temperatura: ${climaData.current.temp_c}°C, Humedad: ${climaData.current.humidity}%`,
+                position: 'bottom',
+                visibilityTime: 2000,
+            });
+        }
     };
 
     useEffect(() => {
         navigation.setParams({ sensors });
     }, [sensors]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            handleRefresh();
+        }, 5000);
+
+        
+        return () => clearInterval(interval);
+    }, [index]); // Se reinicia si el usuario cambia de sensor
+
 
     if (!sensor) {
         return (
@@ -32,8 +51,8 @@ const Sensor = ({ route, navigation, sensors, setSensors }) => {
         );
     }
 
-    const prevSensor = sensors && index > 0 ? sensors[index - 1] : sensors[sensors.length - 1];
-    const nextSensor = sensors && index < sensors.length - 1 ? sensors[index + 1] : sensors[0];
+    // const prevSensor = sensors && index > 0 ? sensors[index - 1] : sensors[sensors.length - 1];
+    // const nextSensor = sensors && index < sensors.length - 1 ? sensors[index + 1] : sensors[0];
 
     return (
         <View style={styles.container2}>

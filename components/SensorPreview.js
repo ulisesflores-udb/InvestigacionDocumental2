@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const SensorPreview = ({ location, onPress }) => {
+const SensorPreview = ({ location, onPress}) => {
     return (
         <TouchableOpacity style={styles.card} onPress={onPress}>
         <View style={styles.row}>
