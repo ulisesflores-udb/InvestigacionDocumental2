@@ -24,32 +24,30 @@ const SensorARScene = (props) => {
 
   return (
     <ViroARScene>
-      <ViroFlexView>
         <ViroText
           text={`Ubicación: ${sensor.location}`}
-          position={[0, 0.06, 1]}   // más cerca del centro
-          scale={[.02, .02, .02]}
+          position={[0, 0.3, -1]}   // más cerca del centro
+          scale={[.1, .1, .1]}
           style={styles.arText}
-          width={.01}
-          height={0.5}
+          width={2}
+          height={1}
         />
         <ViroText
           text={`Temperatura: ${sensor.temperature}°C`}
-          position={[0, 0.02, 1]}   // solo un poco abajo
-          scale={[.02, .02, .02]}
+          position={[0, 0.1, -1]}   // solo un poco abajo
+          scale={[.1, .1, .1]}
           style={styles.arText}
           width={2.5}
           height={0.5}
         />
         <ViroText
           text={`Humedad: ${sensor.humidity}%`}
-          position={[0, -0.02, 1]}  // más cerca del anterior
-          scale={[.02, .02, .02]}
+          position={[0, -0.1, -1]}  // más cerca del anterior
+          scale={[.1, .1, .1]}
           style={styles.arText}
           width={2.5}
           height={0.5}
         />
-      </ViroFlexView>
     </ViroARScene>
   );
 };
@@ -133,6 +131,10 @@ const Sensor = ({ route, navigation, sensors, setSensors, obtenerClima }) => {
 };
 
 const styles = StyleSheet.create({
+  container_flex: {
+    width: 100,
+    height: 100
+  },
   container2: {
     flex: 1,
     width: '100%',
