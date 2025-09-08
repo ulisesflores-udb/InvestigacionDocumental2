@@ -7,35 +7,49 @@ import {
   ViroARSceneNavigator,
   ViroARScene,
   ViroText,
-  ViroConstants
+  ViroQuad,
+  ViroConstants,
+  ViroMaterials,
+  ViroFlexView
 } from '@reactvision/react-viro';
+
+ViroMaterials.createMaterials({
+  labelBackground: {
+    diffuseColor: "#000",
+  },
+});
 
 const SensorARScene = (props) => {
   const { sensor } = props;
 
   return (
     <ViroARScene>
-      <ViroText
-        text={`Ubicación: ${sensor.location}`}
-        position={[0, 0.2, -1]}  // un poco más arriba
-        style={styles.arText}
-        width={3}
-        height={2}
-      />
-      <ViroText
-        text={`Temperatura: ${sensor.temperature}°C`}
-        position={[0, 0, -1]} // centro
-        style={styles.arText}
-        width={3}
-        height={2}
-      />
-      <ViroText
-        text={`Humedad: ${sensor.humidity}%`}
-        position={[0, -0.2, -1]} // más abajo
-        style={styles.arText}
-        width={3}
-        height={2}
-      />
+      <ViroFlexView>
+        <ViroText
+          text={`Ubicación: ${sensor.location}`}
+          position={[0, 0.06, 1]}   // más cerca del centro
+          scale={[.02, .02, .02]}
+          style={styles.arText}
+          width={.01}
+          height={0.5}
+        />
+        <ViroText
+          text={`Temperatura: ${sensor.temperature}°C`}
+          position={[0, 0.02, 1]}   // solo un poco abajo
+          scale={[.02, .02, .02]}
+          style={styles.arText}
+          width={2.5}
+          height={0.5}
+        />
+        <ViroText
+          text={`Humedad: ${sensor.humidity}%`}
+          position={[0, -0.02, 1]}  // más cerca del anterior
+          scale={[.02, .02, .02]}
+          style={styles.arText}
+          width={2.5}
+          height={0.5}
+        />
+      </ViroFlexView>
     </ViroARScene>
   );
 };
@@ -107,22 +121,6 @@ const Sensor = ({ route, navigation, sensors, setSensors, obtenerClima }) => {
       </View>
       <View style={styles.buttonRow}>
         <Button
-          name="arrow-back-outline"
-          size={22}
-          color="#333"
-          onPress={() => navigation.setParams({
-            index: index > 0 ? index - 1 : sensors.length - 1
-          })}
-        />
-        <Button
-          name="arrow-forward-outline"
-          size={22}
-          color="#333"
-          onPress={() => navigation.setParams({
-            index: index < sensors.length - 1 ? index + 1 : 0
-          })}
-        />
-        <Button
           name="refresh"
           size={36}
           color="#333"
@@ -150,14 +148,12 @@ const styles = StyleSheet.create({
   },
   arText: {
     fontFamily: 'Arial',
-    fontSize: 30,
+    fontSize: 24,
     color: '#fff',
     textAlign: 'center',
     textAlignVertical: 'center',
     fontWeight: 'bold',
-    backgroundColor: '#38b6ff99',
     padding: 10,
-    borderRadius: 8,
   },
   fab: {
     position: "absolute",
